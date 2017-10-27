@@ -350,15 +350,11 @@ Handler for when users edit the contents of a group.
     window.groupContentsChanged = ( group, firstTime ) ->
         window.validate group
 
-Handler for when users remove a group.
+Handler for when users remove a group: revalidate the parent.
 
     window.groupDeleted = ( group ) ->
         if group.parent?
-            if group.parent.children[0]
-                window.validate group.parent.children[0]
-        else
-            if group.plugin?.topLevel[0]
-                window.validate group.plugin.topLevel[0]
+            window.validate group.parent
 
 Handler for both the context menu and the tag menu of a group.  It creates
 three different items for such menus, each documented separately below.
