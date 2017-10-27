@@ -26,6 +26,11 @@ We also change the Help/About menu item to be specific to this demo app.
         href="https://github.com/nathancarter/weblurch/blob/master/app/sidebar-example-solo.litcoffee"
         >source code for this demo app</a>.</p>'
 
+This application needs the equation editor plugin, so we must tell the setup
+script to load it, by modifying the following global variable.
+
+    window.pluginsToLoad.push 'equationeditor'
+
 ## Infrastructure for code forms and categories
 
 A code form is an abstract syntactic element that will be represented in the
