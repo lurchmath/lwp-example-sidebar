@@ -1,15 +1,16 @@
 
-# Sidebar Example webLurch Application
+# Sidebar Example Application, Lurch Web Platform
 
 ## Overview
 
 To know what's going on here, you should first have read the documenation
-for [the simple example application](simple-example-solo.litcoffee) and then
-for [the complex example application](complex-example-solo.litcoffee).
-This application is more useful than either of those.
+for the other example applications
+([one](https://github.com/lurchmath/lwp-example-simple),
+[two](https://github.com/lurchmath/lwp-example-complex), and
+[three](https://github.com/lurchmath/lwp-example-math)) built on the
+[Lurch Web Platform (LWP)](https://github.com/lurchmath/lurch).
 
-[A live version of this app is online here.](
-http://nathancarter.github.io/weblurch/app/sidebar-example.html)
+[See a live version of this application online here.](https://lurchmath.github.io/lwp-example-sidebar/)
 
 Set the app name with the same function we used in the simple example app.
 
@@ -17,13 +18,14 @@ Set the app name with the same function we used in the simple example app.
 
 Add a source code link to the help menu, as in the simple example app.
 
-    addHelpMenuSourceCodeLink 'app/sidebar-example-solo.litcoffee'
+    addHelpMenuSourceCodeLink \
+        'lwp-example-sidebar/blob/master/lwp-example-sidebar.litcoffee'
 
 We also change the Help/About menu item to be specific to this demo app.
 
     window.helpAboutText =
         '<p>See the fully documented <a target="top"
-        href="https://github.com/nathancarter/weblurch/blob/master/app/sidebar-example-solo.litcoffee"
+        href="https://github.com/lurchmath/lwp-example-sidebar/blob/master/lwp-example-sidebar.litcoffee"
         >source code for this demo app</a>.</p>'
 
 This application needs the equation editor plugin, so we must tell the setup
@@ -208,8 +210,8 @@ A code form may come with an optional validator.  This can be a function to
 be run to validate the group, or if none is provided then all instances pass
 validation; no checks are performed.  Or the validator can instead be an
 array of types (names of other code forms), each with an optional name, in
-which case a validation function will be provided, checking group contents
-against this array as a function signature.
+which case a validation function will be created, which checks group
+contents against this array as a function signature.
 
 Validators will take a group as input, and a boolean flag as a second
 argument, called "verbose."  They must return objects with these members:
@@ -268,7 +270,7 @@ attributes.
       form instance, which is a group in the document, and the second being
       a function that can be called recursively on child groups to translate
       them.  (That function will dispatch the correct code form translator
-      for the chlid group, so that each translator does not need to figure
+      for the child group, so that each translator does not need to figure
       out how to do so on its own.)  If the first parameter is null,
       generic or boilerplate code should be generated, using `__A__`,
       `__B__`, `__C__`, and so on as parameter placeholders.  Such a
@@ -345,7 +347,7 @@ Otherwise the translator is a function that can be run on its own.
 
 ## Event handlers
 
-Handler for when users edit the contents of a group.
+Handler for when users edit the contents of a group: revalidate it.
 
     window.groupContentsChanged = ( group, firstTime ) ->
         window.validate group
@@ -353,8 +355,7 @@ Handler for when users edit the contents of a group.
 Handler for when users remove a group: revalidate the parent.
 
     window.groupDeleted = ( group ) ->
-        if group.parent?
-            window.validate group.parent
+        if group.parent? then window.validate group.parent
 
 Handler for both the context menu and the tag menu of a group.  It creates
 three different items for such menus, each documented separately below.
@@ -430,8 +431,9 @@ Groups plugin, for viewing open and close groupers.
         "<html>
             <head><link rel='stylesheet'
                         href='#{currentPath}/eqed/mathquill.css'></head>
-            <head><link rel='stylesheet'
-                        href='#{currentPath}/groupsplugin.css'></head>
+            <head><style>
+                #{tinymce.activeEditor.Groups.styleSheet}
+            </style></head>
             <body>#{html}</body>
         </html>"
 
@@ -449,7 +451,8 @@ natural language.
 
     window.groupTypes = [
 
-Basic appearance attributes for the group:
+Basic appearance attributes for the group, which have been documented in the
+simpler example applications linked to at the top of this source file.
 
         name : 'codexp'
         color : '#6666cc'
@@ -460,7 +463,7 @@ Basic appearance attributes for the group:
         closeImageHTML : '<font color="#6666cc">]</font>'
         onToolbar : no
 
-Install event handlers, most of which are defined in code further below.
+Install event handlers, most of which are defined earlier in this file.
 
         contentsChanged : window.groupContentsChanged
         deleted : window.groupDeleted
@@ -555,11 +558,17 @@ visual feedback.
 
 ## GUI modifications and setup
 
+The next two lines tell the default app setup routine to avoid filling the
+entire window, but instead to just fill one particular element, the one
+named.  (See [index.html] for where that element is defined.)
+
     window.fullScreenEditor = no
     window.editorContainer = -> document.getElementById 'editorContainer'
     window.afterEditorReady = ( editor ) ->
 
-Install a resize handler.
+Create a resize handler that will be called whenever a user drags the
+splitter between the editor and the sidebar.  This will ensure that the
+editor fills the DIV into which it's been placed.
 
         mainContainer = window.editorContainer.parentNode
         handleResize = ->
@@ -574,7 +583,7 @@ Install a resize handler.
             window.scrollTo vp.x, vp.y
 
 Create the splitter, which will notice that the editor is adjacent to a
-second DIV defined in [sidebar-example.html], and resize them appropriately.
+second DIV defined in [index.html], and resize them appropriately.
 
         window.splitter = ( $ mainContainer ).split
             orientation : 'vertical'
@@ -679,9 +688,9 @@ close the window.
                 </script>
                 """
 
-The above function uses the following to create each entry, based on one
-given top-level group.  It should encode the entirety of that top-level
-group, and return it as HTML to be placed inside a DIV.
+The `createSidebarContent` function uses the following to create each entry,
+based on one given top-level group.  It should encode the entirety of that
+top-level group, and return it as HTML to be placed inside a DIV.
 
     window.createSidebarEntryHTML = ( group ) ->
         code = runTranslation group, lastLanguageChoice, 'code'
@@ -693,9 +702,9 @@ group, and return it as HTML to be placed inside a DIV.
             comment.replace '__A__', code
         "<pre class='javascript'>#{result}</pre>"
 
-The following utility function takes a list of HTML nodes (usually called on
-the content nodes of some group) and converts them to plain text, with
-special handling of MathQuill instances, converting them to their LaTeX form
+The following utility function takes a list of HTML nodes (usually the
+content nodes of some group) and converts them to plain text, with special
+handling of MathQuill instances, converting them to their LaTeX form
 (surrounded by dollar signs).
 
     niceText = ( nodes... ) ->

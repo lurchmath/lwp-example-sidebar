@@ -30,6 +30,8 @@ Try this:
    through the five popup windows the code generates.
  * Choose a new language from the dropdown at the top of the sidebar, and
    watch the code update.
+ * Try right-clicking any group in the document and asking for its
+   explanation, or the explanation of all groups in the document.
 
 Read the (heavily commented) code here:
 

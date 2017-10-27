@@ -1,10 +1,14 @@
 
 # Definitions for the Sidebar Example App
 
-The main file for the app is located [here](sidebar-example-solo.litcoffee).
+The main file for the app is located [here](lwp-example-sidebar.litcoffee).
 
 This file contains the definitions of code forms and categories as well as
 their validation functions, plus translation routines for various languages.
+
+This file should be better documented, but it's actually pretty boring.  It
+just provides a lot of data to functions defined in the main file, linked to
+above.
 
 ## Registering basic code forms and categories
 
